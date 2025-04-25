@@ -1,113 +1,79 @@
 # Tale til Tekst
 
-En applikasjon som konverterer tale til tekst ved hjelp av en tastatursnarvei og Whisper-modell.
+En norsk applikasjon som konverterer tale til tekst ved å bruke [Faster-Whisper](https://github.com/SYSTRAN/faster-whisper) modellen. Hold inne `Ctrl+Alt+S`-tastekombinasjonen for å ta opp tale, og når du slipper tasten, vil opptaket transkriberes automatisk til tekst og limes inn.
 
-## Beskrivelse
+## Hovedfunksjoner
 
-Tale til Tekst er en Windows-applikasjon som lar deg transkribere tale til tekst ved å holde inne en tastatursnarvei. Appen bruker faster-whisper med large-v2 modellen for høykvalitets transkripsjon på norsk. Transkripsjonen limes automatisk inn der markøren befinner seg.
+- **Rask og presis transkripsjon** med Whisper Large-v2 modellen
+- **Norsk språkstøtte** for nøyaktig transkribering av norsk tale
+- **System tray-funksjonalitet** for å kjøre applikasjonen i bakgrunnen
+- **Justerbar lydfølsomhet** for å optimalisere lydopptak fra mikrofonen
+- **Bakgrunnsoperasjon** - hold inne en tastekombinasjon for å ta opp når som helst
+- **Automatisk innliming** av transkribert tekst
+- **Valg av mikrofon** hvis du har flere inngangsenheter
 
 ## Systemkrav
 
-- **Operativsystem:** Windows 10/11
-- **Python:** 3.9 eller 3.10 anbefales (Python 3.13 har kompatibilitetsproblemer)
-- **RAM:** Minst 8GB, 16GB anbefales
-- **Diskplass:** Minst 5GB ledig (modellen er ca. 3GB)
-- **Mikrofon:** Fungerende mikrofon tilkoblet PC-en
-- **CPU:** Moderne CPU med minst 4 kjerner anbefales
+- Windows 10/11
+- Python 3.9 eller nyere
+- Mikrofon
+- Minimum 8GB RAM for optimal ytelse
 
-## Installasjonsguide
+## Installasjon
 
-### Metode 1: Med virtuelt miljø (anbefalt)
-
-1. Klon dette repositoriet:
-```
-git clone https://github.com/yourusername/tale_til_tekst.git
-cd tale_til_tekst
-```
-
-2. Opprett et virtuelt miljø med Python 3.10:
-```
-python -m venv venv
-```
-
-3. Aktiver det virtuelle miljøet:
-```
-# Windows
-venv\Scripts\activate
-```
-
-4. Installer avhengigheter:
-```
-pip install -r requirements.txt
-```
-
-5. Første gang programmet kjøres vil det laste ned Whisper-modellen (ca. 3GB) fra Hugging Face.
-
-### Metode 2: Direkte installasjon
-
-1. Klon dette repositoriet
-2. Installer avhengigheter:
-```
-pip install -r requirements.txt
-```
+1. **Klon eller last ned** dette repositoryet
+2. **Kjør installasjonsskriptet**: 
+   ```
+   install.bat
+   ```
+   Dette vil opprette et virtuelt Python-miljø og installere alle nødvendige avhengigheter.
 
 ## Bruk
 
-1. Start applikasjonen:
-```
-python main.py
-```
+1. **Start applikasjonen**:
+   ```
+   start.bat
+   ```
 
-2. Når programmet er startet vil du se et GUI med status og logg.
-3. Velg mikrofon fra nedtrekksmenyen og juster følsomhet hvis nødvendig.
-4. Hold inne `Ctrl+Alt+S` for å starte opptak mens du snakker.
-5. Slipp tastekombinasjonen når du er ferdig med å snakke.
-6. Transkripsjonen vil bli automatisk limt inn der markøren befinner seg.
+2. **Ta opp tale**:
+   - Hold inne `Ctrl+Alt+S` mens du snakker
+   - Slipp tasten når du er ferdig
+   - Teksten vil automatisk transkriberes og limes inn der markøren er plassert
 
-## Funksjonalitet
+3. **Juster innstillinger** i applikasjonsvinduet:
+   - Velg mikrofon
+   - Juster lydfølsomhet
+   - Se transkriberingsloggen
 
-- **Mikrofonvalg:** Velg mellom tilgjengelige mikrofoner
-- **Lydtesting:** Test mikrofonen din før du starter opptak
-- **Følsomhetsjustering:** Juster mikrofonens følsomhet med glidebryteren
-- **Transkripsjon:** Transkriberer tale til tekst med korrekt norsk tegnsetting
-- **Automatisk innsetting:** Limer automatisk inn teksten der markøren er
+4. **Bruk system tray-funksjonalitet**:
+   - Minimer applikasjonen til system tray ved å klikke på "Minimer til systemfelt"-knappen
+   - Høyreklikk på ikonet i systemfeltet for alternativer
+   - Applikasjonen fortsetter å fungere i bakgrunnen
+
+## Programstruktur
+
+Applikasjonen er delt inn i flere moduler:
+
+- `app.py` - Hovedfilen som starter applikasjonen
+- `gui.py` - Brukergrensesnittkode og system tray-funksjonalitet
+- `recorder.py` - Håndterer lydopptak og tastatursnarveier
+- `transcriber.py` - Håndterer transkripsjon av lyd til tekst med Whisper-modellen
 
 ## Feilsøking
 
-### Vanlige problemer og løsninger
-
-#### "Feil ved lasting av Whisper-modell"
-- Sjekk at du har nok diskplass (minst 5GB ledig)
-- Prøv å slette `.cache/huggingface` i din hjemmemappe og kjør på nytt
-- Bruk et Python-miljø med versjon 3.9 eller 3.10
-
-#### "Invalid sample rate" feil
-- Velg en annen mikrofon fra nedtrekksmenyen
-- Applikasjonen vil prøve å finne en kompatibel sample rate automatisk
-
-#### Transkripsjonen tar lang tid
-- Dette er normalt; Whisper-modellen krever betydelig prosessorkraft
-- Vurder å bruke en maskin med bedre spesifikasjoner
-- Programmet vil ikke fryse mens den transkriberer
-
-#### "Ingen tekst ble generert fra opptaket"
-- Juster mikrofonens følsomhet (gain) høyere
-- Snakk høyere og tydeligere
-- Kontroller at mikrofonen fungerer med "Test mikrofon" knappen
-
-## Begrensninger
-
-- Programmet kjører lokalt og krever betydelige systemressurser
-- Transkripsjonen kan ta tid avhengig av CPU-kraft og lengden på opptaket
-- Norsk språkstøtte kommer fra large-v2 modellen, som ikke er spesifikt trent for norsk
-
-## Bidrag
-
-Bidrag til prosjektet er velkomne! Vennligst følg disse trinnene:
-1. Fork repositoriet
-2. Opprett en feature branch
-3. Send en pull request
+- **Mikrofonen fungerer ikke**: Prøv å velge en annen mikrofon fra nedtrekkslisten
+- **Teksten gjenkjennes ikke korrekt**: Juster lydfølsomheten med glidebryteren
+- **Applikasjonen starter ikke**: Sjekk at du har Python 3.9+ installert og at installasjonsskriptet ble kjørt uten feil
+- **Høyt minnebruk**: Dette er normalt da Whisper-modellen krever mye minne. Lukk andre programmer hvis nødvendig.
 
 ## Lisens
 
-Dette prosjektet er lisensiert under MIT-lisensen - se [LICENSE](LICENSE) filen for detaljer. 
+Dette prosjektet er lisensiert under MIT-lisensen - se [LICENSE](LICENSE) filen for detaljer.
+
+## Anerkjennelser
+
+- [OpenAI Whisper](https://github.com/openai/whisper) - Tale til tekst-modellen
+- [Faster-Whisper](https://github.com/SYSTRAN/faster-whisper) - Optimalisert implementering av Whisper
+- [SoundDevice](https://github.com/spatialaudio/python-sounddevice) - Lydopptaksbibliotek
+- [Keyboard](https://github.com/boppreh/keyboard) - Tastaturkontrollbibliotek
+- [Pystray](https://github.com/moses-palmer/pystray) - System tray-funksjonalitet 
