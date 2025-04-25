@@ -1,0 +1,72 @@
+    Formål:
+    Når brukeren holder inne en valgt tastatursnarvei (global shortcut), starter løsningen automatisk et lydopptak via mikrofon. Når brukeren slipper snarveien, avsluttes opptaket, og den innspilte talen sendes til en Whisper-basert transkripsjonsmodell. Modellen returnerer ferdig tekst med korrekt punktsetting og avsnitt. Til slutt limes teksten automatisk inn der hvor brukerens markør (cursor) befinner seg i Windows.
+
+    Modell:
+    Bruk faster-whisper (basert på modellen NbAiLab/nb-whisper-large fra Hugging Face).
+    Konfigurasjon: Bruk compute_type="int8" og device="cpu".
+
+    GUI:
+
+    Løsningen trenger ikke ha et åpent hovedvindu under vanlig bruk.
+
+    Kun et lite ikon i system tray er valgfritt (ikke nødvendig).
+
+    Alternativt: Et veldig lite vindu som kun viser "Opptak pågår..." mens shortcut holdes inne.
+
+    Tastatursnarvei:
+
+    Global shortcut (f.eks. Ctrl+Alt+S, men skal kunne være lett å endre).
+
+    Når snarveien trykkes ned: Start opptak.
+
+    Når snarveien slippes opp: Avslutt opptak og start transkripsjon.
+
+    Opptak:
+
+    Bruk sounddevice eller annet bibliotek for mikrofonopptak.
+
+    Samplerate: 16kHz, mono.
+
+    Lydopptaket varer så lenge snarveien holdes inne.
+
+    Transkripsjon:
+
+    Bruk Whisper-modellen (language="no") for å generere tekst.
+
+    Når modellen transkriberer, sørg for at tekst returneres med:
+
+        Korrekt norsk punktsetting (punktum, komma, spørsmålstegn, osv.)
+
+        Fornuftige avsnitt der det passer (for eksempel naturlige pauser).
+
+    Lime inn tekst:
+
+    Når modellen har fullført transkripsjon:
+
+        Lim inn den genererte teksten automatisk i det aktive programmet der brukerens cursor var (f.eks. Word, Notepad, nettleser osv.).
+
+        Bruk f.eks. pyperclip (kopier til clipboard) og keyboard (for å trykke Ctrl+V).
+
+    Krav til bruk:
+
+    Løsningen skal kjøre 100% lokalt uten internett-tilgang.
+
+    Alle nødvendige pakker må kunne installeres via pip.
+
+    Pakker som skal brukes:
+
+    faster-whisper (modellkjøring)
+
+    sounddevice (opptak)
+
+    keyboard (global shortcut + tastehendelser)
+
+    numpy (lydbehandling)
+
+    pyperclip (clipboard-håndtering)
+
+    Optimalisering:
+
+    Sørg for at transkripsjonen starter i en egen tråd slik at opptak og GUI (om aktuelt) ikke fryser.
+
+    Rydd opp i midlertidige lydfiler etter bruk.
