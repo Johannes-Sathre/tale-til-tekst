@@ -4,99 +4,77 @@
 """
 Tale til Tekst - Hovedapplikasjon
 
-En applikasjon som konverterer tale til tekst ved å bruke faster-whisper modellen.
+Startpunkt for applikasjonen som konverterer tale til tekst.
 """
 
 import os
 import sys
 import threading
-import keyboard
 import tkinter as tk
-from tkinter import ttk
 
-# Installer nødvendige avhengigheter hvis de mangler
+# Installer avhengigheter om nødvendig
 def ensure_dependencies():
-    """Sjekk om nødvendige pakker er installert, og installer dem hvis de mangler"""
-    try:
-        import PIL
-    except ImportError:
-        print("Installerer Pillow (PIL)...")
-        os.system(f"{sys.executable} -m pip install pillow")
-
-    try:
-        import numpy
-    except ImportError:
-        print("Installerer numpy...")
-        os.system(f"{sys.executable} -m pip install numpy")
-
-    try:
-        import pystray
-    except ImportError:
-        print("Installerer pystray...")
-        os.system(f"{sys.executable} -m pip install pystray")
-
-    try:
-        import sounddevice
-    except ImportError:
-        print("Installerer sounddevice...")
-        os.system(f"{sys.executable} -m pip install sounddevice")
-
-    try:
-        import pyperclip
-    except ImportError:
-        print("Installerer pyperclip...")
-        os.system(f"{sys.executable} -m pip install pyperclip")
-
-    try:
-        import faster_whisper
-    except ImportError:
-        print("Installerer faster-whisper...")
-        os.system(f"{sys.executable} -m pip install faster-whisper")
+    """Sjekker og installerer nødvendige pakker"""
+    packages = [
+        "pillow",
+        "numpy",
+        "pystray",
+        "sounddevice",
+        "pyperclip",
+        "faster-whisper",
+        "keyboard",
+        "cairosvg"
+    ]
+    
+    for package in packages:
+        try:
+            __import__(package.replace("-", "_"))
+        except ImportError:
+            print(f"Installerer {package}...")
+            os.system(f"{sys.executable} -m pip install {package}")
 
 # Sikre at alle avhengigheter er installert
 ensure_dependencies()
 
-# Importer våre moduler
-from gui import TaleApp
-from recorder import setup_keyboard_hooks, cleanup
-from transcriber import load_whisper_model
+# Importer konfigurasjon
+from config import SHORTCUT, setup_resources, configure_cpu_parameters
 
-# Konfigurasjon
-SHORTCUT = "ctrl+alt+s"  # Standard snarvei, kan endres
+# Konfigurer CPU-parametre basert på systemet
+configure_cpu_parameters()
 
-# Globale variabler
-app = None
+# Oppsett av ressurser ved oppstart
+setup_resources()
+
+# Importer applikasjonsmoduler
+from ui import TaleApp
+from recorder import Recorder
+from transcriber import Transcriber
 
 def main():
-    """Hovedfunksjon som starter applikasjonen"""
-    global app
-    
-    # Tilpass systemstiler
+    """Hovedfunksjon"""
+    # På Windows, håndter DPI-innstillinger
     if sys.platform == "win32":
-        # Bruk moderne stil på Windows
         import ctypes
-        ctypes.windll.shcore.SetProcessDpiAwareness(1)
+        try:
+            ctypes.windll.shcore.SetProcessDpiAwareness(1)
+        except:
+            pass
     
     # Opprett hovedvinduet
     root = tk.Tk()
     
-    # Sentrer vinduet på skjermen
-    window_width = 400
-    window_height = 500
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    center_x = int(screen_width/2 - window_width/2)
-    center_y = int(screen_height/2 - window_height/2)
-    root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+    # Opprett komponenter
+    transcriber = Transcriber()
+    recorder = Recorder(transcriber)
     
-    # Opprett TaleApp instansen
-    app = TaleApp(root, SHORTCUT)
+    # Opprett hovedapplikasjonen
+    app = TaleApp(root, SHORTCUT, recorder, transcriber)
     
-    # Last inn whisper-modellen i en bakgrunnstråd
-    threading.Thread(target=lambda: load_whisper_model(app), daemon=True).start()
+    # Last inn Whisper-modellen i bakgrunnstråd
+    threading.Thread(target=transcriber.load_model, daemon=True).start()
     
-    # Registrer tastaturhendelser
-    setup_keyboard_hooks(SHORTCUT, app)
+    # Sett opp tastaturlytting
+    recorder.setup_keyboard_hooks(SHORTCUT)
     
     # Start hovedløkken
     root.mainloop()

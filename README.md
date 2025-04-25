@@ -1,6 +1,6 @@
 # Tale til Tekst
 
-En moderne applikasjon som konverterer tale til tekst ved hjelp av Whisper-modellen. Applikasjonen har et moderne brukergrensesnitt inspirert av G-Helper.
+Applikasjon som konverterer tale til tekst ved hjelp av Whisper-modellen.
 
 ## Funksjoner
 
