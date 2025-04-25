@@ -1,6 +1,50 @@
 # Tale til Tekst
 
-En norsk applikasjon som konverterer tale til tekst ved å bruke [Faster-Whisper](https://github.com/SYSTRAN/faster-whisper) modellen. Hold inne `Ctrl+Alt+S`-tastekombinasjonen for å ta opp tale, og når du slipper tasten, vil opptaket transkriberes automatisk til tekst og limes inn.
+En moderne applikasjon som konverterer tale til tekst ved hjelp av Whisper-modellen. Applikasjonen har et moderne brukergrensesnitt inspirert av G-Helper.
+
+## Funksjoner
+
+- **Enkel transkribering**: Hold inne en tastatursnarvei (standard: Ctrl+Alt+S) for å ta opp tale og få den transkribert til tekst
+- **Automatisk kopering**: Transkripsjonen kopieres automatisk til utklippstavlen og limes inn
+- **Moderne grensesnitt**: Et mørkt, moderne grensesnitt som åpner seg over systemstatusfeltet
+- **System tray-integrasjon**: Kjører i bakgrunnen med et ikon i systemstatusfeltet
+- **Mikrofontesting**: Test mikrofonen din før du begynner å transkribere
+- **Justerbar følsomhet**: Juster mikrofonens følsomhet etter behov
+
+## Installasjon
+
+1. Klone eller last ned prosjektet
+2. Installer avhengighetene:
+   ```
+   pip install faster-whisper sounddevice numpy pillow pystray keyboard pyperclip
+   ```
+3. Kjør applikasjonen:
+   ```
+   python app.py
+   ```
+
+## Bruk
+
+1. Start applikasjonen
+2. Velg mikrofon fra nedtrekkslisten
+3. Hold inne Ctrl+Alt+S for å ta opp tale
+4. Slipp tastene når du er ferdig med å snakke
+5. Transkripsjonen vil automatisk bli kopiert til utklippstavlen og limt inn der markøren står
+
+## Systemkrav
+
+- Python 3.7 eller høyere
+- Minimum 2GB RAM
+- Windows 10 eller nyere
+
+## Nylige forbedringer
+
+- Moderne brukergrensesnitt med mørkt tema
+- Tilpassbare ikoner
+- Flyttbart vindu
+- System tray-integrasjon
+- Forbedret mikrofon-håndtering
+- Moderne innstillingspanel (kommer snart)
 
 ## Hovedfunksjoner
 
@@ -11,44 +55,6 @@ En norsk applikasjon som konverterer tale til tekst ved å bruke [Faster-Whisper
 - **Bakgrunnsoperasjon** - hold inne en tastekombinasjon for å ta opp når som helst
 - **Automatisk innliming** av transkribert tekst
 - **Valg av mikrofon** hvis du har flere inngangsenheter
-
-## Systemkrav
-
-- Windows 10/11
-- Python 3.9 eller nyere
-- Mikrofon
-- Minimum 8GB RAM for optimal ytelse
-
-## Installasjon
-
-1. **Klon eller last ned** dette repositoryet
-2. **Kjør installasjonsskriptet**: 
-   ```
-   install.bat
-   ```
-   Dette vil opprette et virtuelt Python-miljø og installere alle nødvendige avhengigheter.
-
-## Bruk
-
-1. **Start applikasjonen**:
-   ```
-   start.bat
-   ```
-
-2. **Ta opp tale**:
-   - Hold inne `Ctrl+Alt+S` mens du snakker
-   - Slipp tasten når du er ferdig
-   - Teksten vil automatisk transkriberes og limes inn der markøren er plassert
-
-3. **Juster innstillinger** i applikasjonsvinduet:
-   - Velg mikrofon
-   - Juster lydfølsomhet
-   - Se transkriberingsloggen
-
-4. **Bruk system tray-funksjonalitet**:
-   - Minimer applikasjonen til system tray ved å klikke på "Minimer til systemfelt"-knappen
-   - Høyreklikk på ikonet i systemfeltet for alternativer
-   - Applikasjonen fortsetter å fungere i bakgrunnen
 
 ## Programstruktur
 

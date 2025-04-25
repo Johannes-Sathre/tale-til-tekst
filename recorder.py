@@ -26,25 +26,19 @@ temp_file = None
 
 def setup_keyboard_hooks(shortcut, app):
     """Sett opp tastatursnarveier"""
-    # Registrer hendelser for når snarveien trykkes og slippes
-    keyboard.on_press_key(shortcut.split('+')[-1], 
-                         lambda e: on_shortcut_press(e, shortcut, app), 
-                         suppress=True)
-    keyboard.on_release_key(shortcut.split('+')[-1], 
-                           lambda e: on_shortcut_release(e, app), 
-                           suppress=True)
+    # For å unngå å blokkere 's' når den brukes alene, bruker vi en annen tilnærming
+    # Vi lytter på tastekombinasjon-hendelser i stedet for individuelle taster
+    keyboard.add_hotkey(shortcut, lambda: start_recording(app), suppress=False, trigger_on_release=False)
+    
+    # For å detektere når snarveien slippes, sjekker vi når en av tastene i snarveien slippes
+    for key in shortcut.split('+'):
+        keyboard.on_release_key(key, lambda e, app=app: check_recording_stop(e, app), suppress=False)
     
     # Sett opp mikrofon-testfunksjon for app
     app.run_mic_test_callback = lambda: run_mic_test(app)
 
-def on_shortcut_press(event, shortcut, app):
-    """Håndterer når snarveien trykkes"""
-    # Sjekk at alle modifikatorer (Ctrl, Alt, osv.) er trykket
-    if all(keyboard.is_pressed(key) for key in shortcut.split('+')):
-        start_recording(app)
-
-def on_shortcut_release(event, app):
-    """Håndterer når snarveien slippes"""
+def check_recording_stop(event, app):
+    """Sjekk om vi skal stoppe opptak når en del av snarveien slippes"""
     global recording
     if recording:
         stop_recording(app)
