@@ -1,5 +1,6 @@
 customtkinter==5.2.2
 pystray==0.19.5
 pillow==11.2.1
-cairosvg==2.7.1
-pywin32==310 
+pyaudio==0.2.14
+numpy==1.26.4
+screeninfo==0.8.1 

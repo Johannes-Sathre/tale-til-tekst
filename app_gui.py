@@ -22,25 +22,87 @@ class AppGUI(AppWindow):  # Definerer AppGUI-klassen som arver fra AppWindow
     def _create_widgets(self):  # Metode for å opprette alle GUI-elementer
         # Hovedramme som holder alle komponenter
         self.main_frame = ctk.CTkFrame(self)  # Oppretter en ramme som skal inneholde alle komponenter
-        self.main_frame.pack(fill="both", expand=True, padx=10, pady=10)  # Plasserer rammen med padding og fyller tilgjengelig plass
+        self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)  # Økt padding rundt hovedrammen
+        
+        # Lyttevalg-seksjon
+        self.listen_mode_frame = ctk.CTkFrame(self.main_frame)  # Ramme for lyttevalg
+        self.listen_mode_frame.pack(fill="x", padx=15, pady=15)  # Økt padding
+        
+        # Variabel for å holde valgt lyttevalg
+        self.listen_mode_var = ctk.StringVar(value="batch")  # Standardverdi er "batch"
+        
+        # Radioknapper for lyttevalg
+        self.batch_radio = ctk.CTkRadioButton(
+            self.listen_mode_frame,
+            text="Lytt i batch - Ctrl+Shift+X",
+            variable=self.listen_mode_var,
+            value="batch",
+            font=("Helvetica", 12, "bold"),  # Tydeligere font
+            corner_radius=10,  # Rundere hjørner
+            border_width_unchecked=2,  # Tynnere kantlinje
+            border_width_checked=2,  # Tynnere kantlinje
+            hover_color="#2B2B2B"  # Mørkere hover-farge
+        )
+        self.batch_radio.pack(side="left", padx=30, pady=5)  # Økt spacing
+        
+        self.always_radio = ctk.CTkRadioButton(
+            self.listen_mode_frame,
+            text="Lytt alltid",
+            variable=self.listen_mode_var,
+            value="always",
+            font=("Helvetica", 12, "bold"),  # Tydeligere font
+            corner_radius=10,  # Rundere hjørner
+            border_width_unchecked=2,  # Tynnere kantlinje
+            border_width_checked=2,  # Tynnere kantlinje
+            hover_color="#2B2B2B"  # Mørkere hover-farge
+        )
+        self.always_radio.pack(side="left", padx=30, pady=5)  # Økt spacing
+        
+        # Skillelinje under lyttevalg-seksjonen
+        self.listen_separator = ctk.CTkFrame(self.main_frame, height=2, fg_color="#808080")
+        self.listen_separator.pack(fill="x", padx=15, pady=(10, 10))  # Økt padding
         
         # Mikrofon-seksjon
         self.mic_selection_frame = ctk.CTkFrame(self.main_frame)  # Ramme for dropdown og testknapp
-        self.mic_selection_frame.pack(fill="x", padx=10, pady=10)  # Plasserer rammen med padding
+        self.mic_selection_frame.pack(fill="x", padx=15, pady=15)  # Økt padding
         
-        self.mic_dropdown = ctk.CTkComboBox(self.mic_selection_frame, values=["Laster..."])  # Dropdown for mikrofonvalg
-        self.mic_dropdown.pack(side="left", fill="x", expand=True, padx=5)  # Plasserer dropdown til venstre
+        self.mic_dropdown = ctk.CTkComboBox(
+            self.mic_selection_frame, 
+            values=["Laster..."],
+            font=("Helvetica", 12),  # Tydeligere font
+            dropdown_font=("Helvetica", 12),  # Tydeligere font i dropdown
+            corner_radius=10,  # Rundere hjørner
+            border_width=2,  # Tynnere kantlinje
+            button_color="#2B2B2B",  # Mørkere knappefarge
+            button_hover_color="#3B3B3B"  # Mørkere hover-farge
+        )
+        self.mic_dropdown.pack(side="left", fill="x", expand=True, padx=5, pady=5)  # Økt padding
         
-        self.test_button = ctk.CTkButton(self.mic_selection_frame, text="Test", corner_radius=20, width=20, height=20, command=self._test_microphone)  # Rund testknapp for mikrofon
-        self.test_button.pack(side="right", padx=5)  # Plasserer testknappen til høyre
+        self.test_button = ctk.CTkButton(
+            self.mic_selection_frame, 
+            text="Test", 
+            corner_radius=10,  # Rundere hjørner
+            width=30,  # Litt bredere
+            height=30,  # Litt høyere
+            font=("Helvetica", 12, "bold"),  # Tydeligere font
+            border_width=2,  # Tynnere kantlinje
+            hover_color="#2B2B2B",  # Mørkere hover-farge
+            command=self._test_microphone
+        )
+        self.test_button.pack(side="right", padx=5, pady=5)  # Økt padding
         
         # Status indikator for mikrofontest
-        self.mic_status = ctk.CTkLabel(self.mic_selection_frame, text="", width=10)  # Etikett for å vise teststatus
-        self.mic_status.pack(side="right", padx=5)  # Plasserer statusetikett til høyre før testknappen
+        self.mic_status = ctk.CTkLabel(
+            self.mic_selection_frame, 
+            text="", 
+            width=10,
+            font=("Helvetica", 12)  # Tydeligere font
+        )
+        self.mic_status.pack(side="right", padx=5, pady=5)  # Økt padding
         
         # Skillelinje under mikrofonseksjonen
-        self.separator = ctk.CTkFrame(self.main_frame, height=2, fg_color="#808080")  # Oppretter en tynn ramme som skillelinje
-        self.separator.pack(fill="x", padx=10, pady=(5, 5))  # Plasserer skillelinjen med padding
+        self.separator = ctk.CTkFrame(self.main_frame, height=2, fg_color="#808080")
+        self.separator.pack(fill="x", padx=15, pady=(10, 10))  # Økt padding
         
         # Modell-seksjon
         self.model_selection_frame = ctk.CTkFrame(self.main_frame)  # Ramme for modell dropdown og last-knapp
