@@ -1,83 +1,71 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+import customtkinter as ctk  # Importerer customtkinter-biblioteket som ctk
+import threading  # Importerer threading-biblioteket for å kjøre parallelle tråder
+import os  # Importerer operativsystem-modulen for filsystemoperasjoner
+from PIL import Image  # Importerer Image-klassen fra PIL-biblioteket for bildebehandling
+from system_tray import SystemTrayIcon  # Importerer vår SystemTrayIcon-klasse
+from app_gui import AppGUI  # Importerer vår AppGUI-klasse som viser brukergrensesnittet
 
-"""
-Tale til Tekst - Hovedapplikasjon
-
-Startpunkt for applikasjonen som konverterer tale til tekst.
-"""
-
-import os
-import sys
-import threading
-import tkinter as tk
-
-# Installer avhengigheter om nødvendig
-def ensure_dependencies():
-    """Sjekker og installerer nødvendige pakker"""
-    packages = [
-        "pillow",
-        "numpy",
-        "pystray",
-        "sounddevice",
-        "pyperclip",
-        "faster-whisper",
-        "keyboard",
-        "cairosvg"
-    ]
+class TaleTilTekstApp:  # Definerer hovedklassen for applikasjonen
+    """
+    Forenklet hovedklasse for applikasjonen.
+    Koordinerer mellom GUI og system tray.
+    """
+    def __init__(self):  # Konstruktørmetode som kjøres når et objekt lages
+        """
+        Initialiserer applikasjonen.
+        - Setter opp variabler
+        - Oppretter system tray objekt
+        """
+        self.window = None  # Initialiserer window-attributtet til None
+        self.system_tray = SystemTrayIcon(self)  # Oppretter et SystemTrayIcon-objekt med henvisning til denne klassen
     
-    for package in packages:
-        try:
-            __import__(package.replace("-", "_"))
-        except ImportError:
-            print(f"Installerer {package}...")
-            os.system(f"{sys.executable} -m pip install {package}")
-
-# Sikre at alle avhengigheter er installert
-ensure_dependencies()
-
-# Importer konfigurasjon
-from config import SHORTCUT, setup_resources, configure_cpu_parameters
-
-# Konfigurer CPU-parametre basert på systemet
-configure_cpu_parameters()
-
-# Oppsett av ressurser ved oppstart
-setup_resources()
-
-# Importer applikasjonsmoduler
-from ui import TaleApp
-from recorder import Recorder
-from transcriber import Transcriber
-
-def main():
-    """Hovedfunksjon"""
-    # På Windows, håndter DPI-innstillinger
-    if sys.platform == "win32":
-        import ctypes
-        try:
-            ctypes.windll.shcore.SetProcessDpiAwareness(1)
-        except:
-            pass
+    def create_window(self):  # Metode for å opprette hovedvinduet
+        """
+        Oppretter hovedvinduet for applikasjonen ved å instansiere AppGUI-klassen.
+        """
+        self.window = AppGUI(app_controller=self)  # Oppretter et AppGUI-objekt med henvisning til denne klassen som kontroller
     
-    # Opprett hovedvinduet
-    root = tk.Tk()
+    def show_window(self):  # Metode for å vise vinduet
+        """
+        Viser hovedvinduet og bringer det til forgrunnen.
+        Kalles når brukeren klikker på "Vis app" i system tray-menyen.
+        """
+        if self.window:  # Sjekker om window-objektet eksisterer
+            self.window.show()  # Kaller show-metoden på window-objektet for å vise det
     
-    # Opprett komponenter
-    transcriber = Transcriber()
-    recorder = Recorder(transcriber)
+    def hide_window(self):  # Metode for å skjule vinduet
+        """
+        Skjuler hovedvinduet i stedet for å avslutte.
+        Kalles når brukeren klikker på X i tittellinjen.
+        Appen fortsetter å kjøre i system tray.
+        """
+        if self.window:  # Sjekker om window-objektet eksisterer
+            self.window.withdraw()  # Kaller withdraw-metoden på window-objektet for å skjule det
     
-    # Opprett hovedapplikasjonen
-    app = TaleApp(root, SHORTCUT, recorder, transcriber)
+    def exit_app(self):  # Metode for å avslutte applikasjonen
+        """
+        Avslutter applikasjonen fullstendig.
+        Kalles når brukeren velger "Avslutt" fra system tray-menyen.
+        """
+        if self.window:  # Sjekker om window-objektet eksisterer
+            self.window.destroy()  # Kaller destroy-metoden på window-objektet for å lukke vinduet
     
-    # Last inn Whisper-modellen i bakgrunnstråd
-    threading.Thread(target=transcriber.load_model, daemon=True).start()
-    
-    # Sett opp tastaturlytting
-    recorder.setup_keyboard_hooks(SHORTCUT)
-    
-    # Start hovedløkken
-    root.mainloop()
+    def start(self):  # Metode for å starte applikasjonen
+        """
+        Starter applikasjonen:
+        1. Kjører system tray i egen tråd
+        2. Oppretter hovedvinduet via AppGUI-klassen
+        3. Starter hovedløkken (mainloop)
+        """
+        self.system_tray.run()  # Starter system tray-ikonet
+        
+        self.create_window()  # Oppretter hovedvinduet
+        
+        self.window.mainloop()  # Starter hovedløkken for GUI-et
 
-if __name__ == "__main__":
-    main() 
+if __name__ == "__main__":  # Sjekker om denne filen kjøres direkte (ikke importeres)
+    ctk.set_appearance_mode("System")  # Setter utseendemodus for customtkinter
+    ctk.set_default_color_theme("blue")  # Setter standard fargetema for customtkinter
+    
+    app = TaleTilTekstApp()  # Oppretter en instans av TaleTilTekstApp-klassen
+    app.start()  # Kaller start-metoden for å starte applikasjonen
